@@ -1,0 +1,21 @@
+oper <%= name %> {
+  class clients;
+  from {
+<% hostmasks.each do |h| -%>
+    userhost <%= h %>;
+<% end -%>
+  };
+  password "<%= password %>" {md5;};
+  flags
+  {
+<% opflags.each do |f| -%>
+    <%= f %>;
+<% end -%>
+#    can_zline;
+#    can_gzline;
+#    can_gkline;
+  };
+  modes <%= modes %>;
+  snomask <%= snomask %>;
+};
+

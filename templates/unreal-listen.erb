@@ -1,0 +1,8 @@
+listen <%= ip %>:<%= port %> // <%= name %>
+{
+  options {
+<%= enablessl -%>
+    <%= allow %>;
+  };
+};
+

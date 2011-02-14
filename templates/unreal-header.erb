@@ -1,0 +1,154 @@
+loadmodule "/usr/local/lib/Unreal/commands.so";
+loadmodule "/usr/local/lib/Unreal/cloak.so";
+
+include "help.conf";
+
+me {
+  name "<%= name %>";
+  info "<%= info %>";
+  numeric <%= numeric %>;
+};
+
+admin { "<%= admin %>"; };
+
+class clients {
+  pingfreq 90;
+  maxclients 500;
+  sendq 100000;
+  recvq 8000;
+};
+
+class servers {
+  pingfreq 90;
+  maxclients 10;
+  sendq 1000000;
+  connfreq 100;
+};
+
+allow {
+  ip       *@*;
+  hostname *@*;
+  class    clients;
+  maxperip 50;
+};
+
+drpass {
+  restart "<%= restartpass %>";
+  die     "<%= diepass %>";
+};
+
+log "/var/log/ircd/ircd.log" {
+  /* Delete the log file and start a new one when it reaches 2MB, leave
+     this out to always use the same log */
+  maxsize 2097152;
+  flags {
+    oper;
+    kline;
+    connects;
+    server-connects;
+    kills;
+    errors;
+    sadmin-commands;
+    chg-commands;
+    oper-override;
+    spamfilter;
+  };
+};
+
+/* Standard aliases */
+alias NickServ { type services; };
+alias ChanServ { type services; };
+alias OperServ { type services; };
+alias HelpServ { type services; };
+alias StatServ { type stats; };
+
+/* Standard aliases */
+alias "services" {
+  format "^#" {
+    target "chanserv";
+    type services;
+    parameters "%1-";
+  };
+  format "^[^#]" {
+    target "nickserv";
+    type services;
+    parameters "%1-";
+  };
+  type command;
+};
+
+alias "identify" {
+  format "^#" {
+    target "chanserv";
+    type services;
+    parameters "IDENTIFY %1-";
+  };
+  format "^[^#]" {
+    target "nickserv";
+    type services;
+    parameters "IDENTIFY %1-";
+  };
+  type command;
+};
+
+alias "glinebot" {
+  format ".+" {
+    command "gline";
+    type real;
+    parameters "%1 2d Bots are not allowed on this server, please read the faq at http://www.example.com/faq/123";
+  };
+  type command;
+};
+
+ban nick {
+  mask "*C*h*a*n*S*e*r*v*";
+  reason "Reserved for Services";
+};
+ban nick {
+  mask "*N*i*c*k*S*e*r*v*";
+  reason "Reserved for Services";
+};
+ban nick {
+  mask "*O*p*e*r*S*e*r*v*";
+  reason "Reserved for Services";
+};
+ban nick {
+  mask "*M*e*m*o*S*e*r*v*";
+  reason "Reserved for Services";
+};
+
+/* Network configuration */
+set {
+  network-name      "<%= networkname %>";
+  default-server    "<%= defaultserverconf %>";
+  services-server   "<%= servicesserver %>";
+  hiddenhost-prefix "Guest";
+  /* HINT: On *NIX, you can run 'unreal gencloak' in your shell to let
+   *       Unreal generate 3 random strings for you.
+   */
+  cloak-keys {
+<% cloaks.each do |c| -%>
+    "<%= c %>";
+<% end -%>
+  };
+};
+
+/* Server specific configuration */
+set {
+  modes-on-connect "+iw";
+  modes-on-oper    "+wgs";
+  options {
+    hide-ulines;
+    identd-check;
+    show-connect-info;
+  };
+
+  oper-only-stats "okfGsMRUEelLCXzdD";
+};
+
+ulines {
+<% ulines.each do |u| -%>
+  "<%= u %>";
+<% end -%>
+};
+

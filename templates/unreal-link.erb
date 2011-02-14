@@ -1,0 +1,18 @@
+link <%= name %>
+{
+  username <%= username %>;
+  hostname <%= hostname %>;
+  bind-ip  <%= bindip %>;
+  port     <%= port %>;
+  hub      <%= hub %>;
+  password-connect <%= '"' + password + '"' %>;
+  password-receive <%= '"' + password + '"' %>;
+  class servers;
+  options {
+    /* Note: You should not use autoconnect when linking services */
+<% options.each do |o| -%>
+    <%= o %>;
+<% end -%>
+  };
+};
+
