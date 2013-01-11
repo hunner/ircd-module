@@ -1,3 +1,5 @@
 ircd
 
 This is the ircd module.
+
+This ircd module is old. Check out https://github.com/hunner/puppet-charybdis instead.
